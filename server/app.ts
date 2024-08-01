@@ -1,15 +1,15 @@
-import express from "express";
+import express, { Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
-import userRouter from "./routes/userRouter";
-import projectRouter from "./routes/projectRouter";
+import userRouter from "./routes/user.routes";
+import projectRouter from "./routes/project.routes";
 import ENV from "./utils/ENV";
 import connectDb from "./config/dbConnection";
 import CustomError from "./utils/customError";
 import { HttpStatus } from "./types/HttpStatus";
 import errorHandlingMidleware from "./middlewares/errorHandler";
 
-const app = express();
+const app: Application = express();
 
 app.use(
   cors({
@@ -27,7 +27,9 @@ app.all("*", (req, res, next) =>
 );
 app.use(errorHandlingMidleware);
 
-app.listen(ENV.PORT, () => {
-  connectDb();
+const server = app.listen(ENV.PORT, async () => {
+  await connectDb();
   console.log(`server running on http://localhost:${ENV.PORT}`);
 });
+
+export default server;

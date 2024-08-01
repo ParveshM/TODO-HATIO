@@ -1,14 +1,23 @@
+import { Router } from "express";
 import authenticateUser from "../middlewares/auth";
-import { projectValidator } from "../validators/projectValidators";
+import {
+  newTodoValidator,
+  projectValidator,
+  updateTodoValidator,
+} from "../validators/projectValidators";
 import {
   createProject,
   deleteProject,
   projects,
   updateProjectTitle,
 } from "../controllers/projectController";
-import { Router } from "express";
 import validateObjectId from "../middlewares/validateObjectId";
-import { getProjectWithTodos } from "../controllers/todoController";
+import {
+  createNewTodo,
+  deleteTodo,
+  getProjectWithTodos,
+  updateTodo,
+} from "../controllers/todoController";
 const router = Router();
 
 router.get("/", authenticateUser, projects);
@@ -33,11 +42,22 @@ router.get(
   [authenticateUser, validateObjectId],
   getProjectWithTodos
 );
-router.post("/:projectId/todos", [authenticateUser, validateObjectId]);
-router.patch("/:projectId/todos/:todoId", [authenticateUser, validateObjectId]);
+router.post(
+  "/:projectId/todos",
+  [authenticateUser, validateObjectId],
+  newTodoValidator,
+  createNewTodo
+);
+router.patch(
+  "/:projectId/todos/:todoId",
+  [authenticateUser, validateObjectId],
+  updateTodoValidator,
+  updateTodo
+);
 router.delete("/:projectId/todos/:todoId", [
   authenticateUser,
   validateObjectId,
+  deleteTodo,
 ]);
 
 export default router;
