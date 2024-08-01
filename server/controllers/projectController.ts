@@ -23,7 +23,7 @@ const createProject = async (
     const { title } = matchedData(req);
 
     const existingProject = await Project.findOne({
-      title: { $regex: `${title}`, $options: "i" },
+      title: { $regex: `${title.trim()}`, $options: "i" },
     });
 
     if (existingProject) {
@@ -72,7 +72,7 @@ const updateProjectTitle = async (
     const { projectId } = req.params;
     const { title } = req.body;
     const existingProject = await Project.findOne({
-      title: { $regex: `${title}`, $options: "i" },
+      title: { $regex: `${title.trim()}`, $options: "i" },
     });
     if (existingProject) {
       return next(

@@ -19,7 +19,9 @@ export default async function authenticateUser(
 ) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return res.status(HttpStatus.FORBIDDEN).json("Your are not authenticated");
+    return next(
+      new CustomError("Your are not authenticated", HttpStatus.FORBIDDEN)
+    );
   }
   const access_token = authHeader.split(" ")[1];
   try {
