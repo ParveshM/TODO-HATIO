@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { hashPassword } from "../utils/hashPassword";
 
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -12,4 +13,7 @@ var userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("User", userSchema);
+userSchema.pre("save", async function () {
+  this.password = await hashPassword(this.password);
+});
+export default mongoose.model("User", userSchema);
