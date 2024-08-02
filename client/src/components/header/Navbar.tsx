@@ -31,7 +31,7 @@ const Navbar = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       type="button"
-                      className="relative flex items-center font-semibold justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      className="relative flex items-center font-semibold justify-center w-10 h-10 rounded-full bg-indigo-600 text-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 "
                     >
                       {email ? capitalize(email[0]) : "U"}
                     </DropdownMenuTrigger>
