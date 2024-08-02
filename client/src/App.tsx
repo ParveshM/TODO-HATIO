@@ -3,15 +3,18 @@ import MainRouter from "./routes/router";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
+import ErrorBoundary from "./components/Error/ErrorBoundary";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Provider store={store}>
-        <MainRouter />
-        <Toaster />
-      </Provider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Provider store={store}>
+          <MainRouter />
+          <Toaster />
+        </Provider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

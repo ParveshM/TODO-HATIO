@@ -55,7 +55,7 @@ export const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-[98vh]">
-      <Card className="w-[350px]">
+      <Card className="w-[350px] shadow-md">
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription></CardDescription>
@@ -109,14 +109,14 @@ export const Login = () => {
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               </div>
-              <Link to="/signup" className="flex justify-center">
-                <p>
-                  Don't have an account ?
+              <p className="flex justify-center">
+                Don't have an account ?
+                <Link to="/signup">
                   <span className="pl-1 font-semibold hover:underline">
                     Signup
                   </span>
-                </p>
-              </Link>
+                </Link>
+              </p>
             </div>
           </form>
         </CardContent>

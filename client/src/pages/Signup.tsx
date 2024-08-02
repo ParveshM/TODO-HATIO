@@ -46,7 +46,7 @@ const Signup = () => {
   });
   return (
     <div className="flex justify-center items-center h-[98vh]">
-      <Card className="w-[350px]">
+      <Card className="w-[350px] shadow-md">
         <CardHeader>
           <CardTitle>Signup</CardTitle>
           <CardDescription></CardDescription>
@@ -114,12 +114,12 @@ const Signup = () => {
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               </div>
-              <Link to="/login" className="flex justify-center">
-                <p>
-                  Already have an account ?{" "}
+              <p className="flex justify-center">
+                Already have an account ?{" "}
+                <Link to="/login">
                   <span className="font-semibold hover:underline">Login</span>
-                </p>
-              </Link>
+                </Link>
+              </p>
             </div>
           </form>
         </CardContent>

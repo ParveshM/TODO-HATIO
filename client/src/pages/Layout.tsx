@@ -5,7 +5,7 @@ const Layout = () => {
   return (
     <>
       <Navbar />
-      <main className="mt-14 md:mt-0">{<Outlet />}</main>
+      <main className="mt-14 md:mt-0  mx-2">{<Outlet />}</main>
     </>
   );
 };

@@ -32,11 +32,13 @@ const createProject = async (
       );
     }
 
-    await Project.create({ title, userId: id });
+    const newProject = await Project.create({ title, userId: id });
 
-    return res
-      .status(HttpStatus.OK)
-      .json({ success: true, message: "Project created successfully" });
+    return res.status(HttpStatus.OK).json({
+      success: true,
+      newProject,
+      message: "Project created successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -49,7 +51,11 @@ const createProject = async (
 const projects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.user;
-    const projects = await Project.find({ userId: id });
+    const { page } = req.query as unknown as { page: number };
+    const currPage = page || 1;
+    const limit = 5;
+    const skip = limit * (currPage - 1);
+    const projects = await Project.find({ userId: id }).skip(skip).limit(limit);
     return res.status(HttpStatus.OK).json({
       success: true,
       message: "Projects fetched successfully",
