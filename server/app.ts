@@ -13,8 +13,8 @@ const app: Application = express();
 
 app.use(
   cors({
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    origin: "http://localhost/5173",
   })
 );
 app.use(morgan("dev"));
