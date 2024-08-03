@@ -16,7 +16,7 @@ const getProjectWithTodos = async (
   try {
     const { projectId } = req.params;
 
-    const todos = await Todo.findById(projectId);
+    const todos = await Todo.find({ projectId });
     return res.status(HttpStatus.OK).json({
       success: true,
       message: "Todos fetched successfully",
@@ -53,10 +53,11 @@ const createNewTodo = async (
         .json({ success: false, message: "Todo already existing." });
     }
 
-    await Todo.create({ projectId, description });
+    const newTodo = await Todo.create({ projectId, description });
     return res.status(HttpStatus.OK).json({
       success: true,
-      message: "Todos created successfully",
+      newTodo,
+      message: "Todo created successfully",
     });
   } catch (error) {
     next(error);
@@ -77,7 +78,7 @@ const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
     await Todo.findByIdAndUpdate(todoId, data);
     return res.status(HttpStatus.OK).json({
       success: true,
-      message: "Todos updated successfully",
+      message: "Todo updated successfully",
     });
   } catch (error) {
     next(error);
@@ -98,7 +99,7 @@ const deleteTodo = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(HttpStatus.OK).json({
       success: true,
-      message: "Todos deleted successfully",
+      message: "Todo deleted successfully",
     });
   } catch (error) {
     next(error);

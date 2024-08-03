@@ -5,7 +5,7 @@ import ProjectShimmer from "@/components/shimmer/ProjectShimmer";
 import { Button } from "@/components/ui/button";
 import { PROJECT_URL } from "@/constants";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
-import { ProjectListType } from "@/types";
+import { DeleteConfirmation, ProjectListType } from "@/types";
 import axiosJWT from "@/utils/axiosJWT";
 import showToast from "@/utils/toaster";
 import { useEffect, useState } from "react";
@@ -15,10 +15,10 @@ const Home = () => {
     useInfiniteScroll();
   const [projects, setProjects] = useState<ProjectListType[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [confirmation, setConfirmation] = useState<{
-    show: boolean;
-    id: string | null;
-  }>({ show: false, id: null });
+  const [confirmation, setConfirmation] = useState<DeleteConfirmation>({
+    show: false,
+    _id: null,
+  });
 
   useEffect(() => {
     setIsLoading(true);
@@ -38,17 +38,17 @@ const Home = () => {
       return prev;
     });
 
-  const handleDeleteProject = (id: string) =>
-    setConfirmation({ show: true, id });
+  const handleDeleteProject = (_id: string) =>
+    setConfirmation({ show: true, _id });
 
   // handle modal confirmation
   const handleDeleteTrue = () => {
-    if (confirmation.id) {
+    if (confirmation._id) {
       setProjects((prev) =>
-        prev.filter((project) => project._id !== confirmation.id)
+        prev.filter((project) => project._id !== confirmation._id)
       );
       axiosJWT
-        .delete(`${PROJECT_URL}/${confirmation.id}`)
+        .delete(`${PROJECT_URL}/${confirmation._id}`)
         .then(({ data }) => showToast(data.message))
         .catch(() =>
           showToast(
@@ -57,9 +57,9 @@ const Home = () => {
           )
         );
     }
-    setConfirmation({ show: false, id: null });
+    setConfirmation({ show: false, _id: null });
   };
-  const handleDeleteFalse = () => setConfirmation({ show: false, id: null });
+  const handleDeleteFalse = () => setConfirmation({ show: false, _id: null });
 
   return (
     <div className="flex justify-center ">
@@ -70,7 +70,7 @@ const Home = () => {
         </div>
 
         <div className="space-y-4 mt-5 p-5 rounded-md shadow-md border">
-          <div className="flex flex-col space-y-4 ">
+          <div className="flex flex-col space-y-4">
             {projects.length ? (
               projects.map((project, i) => (
                 <ProjectList

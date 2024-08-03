@@ -28,7 +28,7 @@ const createProject = async (
 
     if (existingProject) {
       return next(
-        new CustomError(`${title} already exists`, HttpStatus.BAD_REQUEST)
+        new CustomError(`"${title}" already exists`, HttpStatus.BAD_REQUEST)
       );
     }
 
@@ -82,7 +82,7 @@ const updateProjectTitle = async (
     });
     if (existingProject) {
       return next(
-        new CustomError(`${title} already exists`, HttpStatus.BAD_REQUEST)
+        new CustomError(`"${title}" already exists`, HttpStatus.BAD_REQUEST)
       );
     }
 
