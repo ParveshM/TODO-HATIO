@@ -9,6 +9,7 @@ import { clearUser } from "@/redux/UserSlice";
 import capitalize from "@/utils/capitalize";
 import showToast from "@/utils/toaster";
 import { LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -18,11 +19,13 @@ const Navbar = () => {
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="flex flex-shrink-0 items-center">
-            <img
-              className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-              alt="Your Company"
-            />
+            <Link to="/">
+              <img
+                className="h-8 w-auto"
+                src="https://i.pinimg.com/originals/52/6a/bf/526abf16cc3e74882fa7304abc0f841c.png"
+                alt="Your Company"
+              />
+            </Link>
           </div>
           {isAuthenticated && (
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
