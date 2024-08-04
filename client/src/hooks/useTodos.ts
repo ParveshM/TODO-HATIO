@@ -71,8 +71,14 @@ export default function useTodos() {
     let currentStatus: string = "";
     setTodos((prev) =>
       prev.map((todo) => {
-        const newStatus = todo.status === "active" ? "completed" : "active";
-        currentStatus = newStatus;
+        if (todo._id === id) {
+          currentStatus = todo.status === "active" ? "completed" : "active";
+        }
+        const newStatus =
+          (todo._id === id && todo.status) === "active"
+            ? "completed"
+            : "active";
+
         return todo._id === id
           ? {
               ...todo,

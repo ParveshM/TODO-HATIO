@@ -38,7 +38,7 @@ const Todo = () => {
           <form className="flex mb-4" onSubmit={handleAddOrUpdateTodo}>
             <input
               placeholder="Do something 😃"
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value.trim())}
               value={description}
               className="w-full border-r-0 rounded-r-none h-10 focus:outline-none rounded-md border border-input bg-background px-3 py-2 text-sm"
             />

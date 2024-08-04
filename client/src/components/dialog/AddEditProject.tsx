@@ -15,25 +15,56 @@ import { PROJECT_URL } from "@/constants";
 import { useFormik } from "formik";
 import { TitleValidationSchema } from "@/utils/validation";
 import showToast from "@/utils/toaster";
+import { FolderPlus, Pencil } from "lucide-react";
 
-const AddProject: React.FC<{
-  setShow: (isOpen: boolean) => void;
-  setNewProject: (project: ProjectListType) => void;
-}> = ({ setShow, setNewProject }) => {
+type AddEditProjectProps = {
+  setShow: () => void;
+  handleNewProject?: (project: ProjectListType) => void;
+  handleUpdateProjectName?: (title: string) => void;
+  action: "add" | "edit";
+  currentProjectInfo?: { _id: string; title: string };
+};
+
+const AddEditProject: React.FC<AddEditProjectProps> = ({
+  setShow,
+  handleUpdateProjectName,
+  handleNewProject,
+  action,
+  currentProjectInfo,
+}) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
-      title: "",
+      title: currentProjectInfo?.title || "",
     },
     validationSchema: TitleValidationSchema,
     onSubmit: ({ title }) => {
       setIsSubmitting(true);
+      if (action === "add") {
+        axiosJWT
+          .post(PROJECT_URL, { title })
+          .then(({ data }) => {
+            showToast(data.message);
+            handleNewProject && handleNewProject(data.newProject);
+            setShow();
+          })
+          .catch(({ response }) => {
+            const { message } = response.data;
+            formik.errors.title = message;
+          })
+          .finally(() => setIsSubmitting(false));
+        return;
+      }
+      if (currentProjectInfo && currentProjectInfo.title === title.trim()) {
+        setShow();
+        return;
+      }
       axiosJWT
-        .post(PROJECT_URL, { title })
+        .patch(PROJECT_URL + `/${currentProjectInfo?._id}`, { title })
         .then(({ data }) => {
           showToast(data.message);
-          setNewProject(data.newProject);
-          setShow(false);
+          handleUpdateProjectName && handleUpdateProjectName(title);
+          setShow();
         })
         .catch(({ response }) => {
           const { message } = response.data;
@@ -44,11 +75,21 @@ const AddProject: React.FC<{
   });
 
   return (
-    <Dialog onOpenChange={() => setShow(false)} defaultOpen>
+    <Dialog onOpenChange={setShow} defaultOpen>
       <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            Create a new project
+            {action === "add" ? (
+              <h2 className="flex items-center  gap-2 text-xl font-semibold">
+                Create a new project
+                <FolderPlus className="size-5 mt-1" />
+              </h2>
+            ) : (
+              <h2 className="flex items-center  gap-2 text-xl font-semibold">
+                Edit Project
+                <Pencil className="size-5 mt-1" />
+              </h2>
+            )}
           </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
@@ -73,7 +114,7 @@ const AddProject: React.FC<{
           </div>
           <div className="flex justify-center items-center">
             <Button disabled={isSubmitting} type="submit">
-              Submit
+              {action === "add" ? "Submit" : "save"}
             </Button>
           </div>
         </form>
@@ -82,4 +123,4 @@ const AddProject: React.FC<{
   );
 };
 
-export default AddProject;
+export default AddEditProject;

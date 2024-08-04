@@ -22,7 +22,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
     await User.create(req.body);
     return res
-      .status(HttpStatus.OK)
+      .status(HttpStatus.CREATED)
       .json({ success: true, message: "User registered successfully" });
   } catch (error) {
     next(error);

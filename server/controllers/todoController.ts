@@ -42,17 +42,6 @@ const createNewTodo = async (
     const { projectId } = req.params;
     const { description } = matchedData(req);
 
-    const existingTodo = await Todo.findOne({
-      projectId,
-      description: { $regex: `${description.trim()}`, $options: "i" },
-    });
-
-    if (existingTodo) {
-      return res
-        .status(HttpStatus.OK)
-        .json({ success: false, message: "Todo already existing." });
-    }
-
     const newTodo = await Todo.create({ projectId, description });
     return res.status(HttpStatus.OK).json({
       success: true,
@@ -74,7 +63,7 @@ const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
     if (!errors.isEmpty()) return next(errors);
     const { todoId } = req.params;
     const data = matchedData(req);
-
+    console.log(data);
     await Todo.findByIdAndUpdate(todoId, data);
     return res.status(HttpStatus.OK).json({
       success: true,

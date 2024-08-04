@@ -22,15 +22,18 @@ const ConfirmationModal: React.FC<Props> = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            project and it's associated Todo's from our servers.
+            This action cannot be undone. Deleting this data will permanently
+            remove it from our servers and it cannot be recovered.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => handleDeleteFalse()}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={() => handleDeleteTrue()}>
+          <AlertDialogAction
+            className="bg-destructive hover:bg-destructive/90"
+            onClick={() => handleDeleteTrue()}
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -7,7 +7,7 @@ export type ProjectListType = {
 export type TodoType = {
   _id: string;
   description: string;
-  status: "active" | "completed" | "isEditing";
+  status: "active" | "completed";
 };
 
 export type EditTodoType = {
