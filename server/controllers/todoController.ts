@@ -48,7 +48,7 @@ const createNewTodo = async (
     const { description } = matchedData(req);
 
     const newTodo = await Todo.create({ projectId, description });
-    return res.status(HttpStatus.OK).json({
+    return res.status(HttpStatus.CREATED).json({
       success: true,
       newTodo,
       message: "Todo created successfully",

@@ -1,27 +1,36 @@
 import app from "../app";
 import request, { Response } from "supertest";
 import mongoose from "mongoose";
-import Users from "../models/Users";
-import Projects from "../models/Projects";
-import Todos from "../models/Todos";
 import { HttpStatus } from "../types/HttpStatus";
 import { loginUser, registerUser, user } from "../utils/test.utils";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 describe("Test user.routes", () => {
-  beforeEach(async () => {
-    await Users.deleteMany({});
-    await Projects.deleteMany({});
-    await Todos.deleteMany({});
+  let mongoServer: MongoMemoryServer;
+
+  beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+
+    await mongoose.connect(mongoUri);
   });
 
-  afterAll((done) => {
-    app.close(done);
-    mongoose.connection.close();
+  afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
+  });
+
+  beforeEach(async () => {
+    const collections = await mongoose.connection.db.collections();
+
+    for (let collection of collections) {
+      await collection.deleteMany({});
+    }
   });
 
   it("should create a new user", async () => {
     const res: any = await registerUser(user);
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(HttpStatus.CREATED);
     expect(res.body.message).toBe("User registered successfully");
   });
 
