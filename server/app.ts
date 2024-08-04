@@ -30,9 +30,11 @@ app.all("*", (req, res, next) =>
 );
 app.use(errorHandlingMidleware);
 
-const server = app.listen(ENV.PORT, async () => {
-  await connectDb();
-  console.log(`server running on http://localhost:${ENV.PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(ENV.PORT, async () => {
+    await connectDb();
+    console.log(`server running on http://localhost:${ENV.PORT}`);
+  });
+}
 
-export default server;
+export default app;
