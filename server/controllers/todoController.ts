@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import Todo from "../models/Todos";
 import { HttpStatus } from "../types/HttpStatus";
 import { matchedData, validationResult } from "express-validator";
+import Projects from "../models/Projects";
+import CustomError from "../utils/customError";
 
 /**
  * * METHOD : GET
@@ -15,7 +17,10 @@ const getProjectWithTodos = async (
 ) => {
   try {
     const { projectId } = req.params;
-
+    const isProjectExist = await Projects.findById(projectId);
+    if (!isProjectExist) {
+      return next(new CustomError("Project not found", HttpStatus.BAD_REQUEST));
+    }
     const todos = await Todo.find({ projectId });
     return res.status(HttpStatus.OK).json({
       success: true,
@@ -63,7 +68,6 @@ const updateTodo = async (req: Request, res: Response, next: NextFunction) => {
     if (!errors.isEmpty()) return next(errors);
     const { todoId } = req.params;
     const data = matchedData(req);
-    console.log(data);
     await Todo.findByIdAndUpdate(todoId, data);
     return res.status(HttpStatus.OK).json({
       success: true,

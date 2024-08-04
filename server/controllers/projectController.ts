@@ -24,6 +24,7 @@ const createProject = async (
 
     const existingProject = await Project.findOne({
       title: { $regex: `^${title}$`, $options: "i" },
+      userId: id,
     });
 
     if (existingProject) {
@@ -79,9 +80,11 @@ const updateProjectTitle = async (
 ) => {
   try {
     const { projectId } = req.params;
+    const { id } = req.user;
     const { title } = req.body;
     const existingProject = await Project.findOne({
       title: { $regex: `^${title}$`, $options: "i" },
+      userId: id,
     });
     if (existingProject) {
       return next(

@@ -7,6 +7,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/redux/Store";
 import { clearUser } from "@/redux/UserSlice";
 import capitalize from "@/utils/capitalize";
+import { removeItem } from "@/utils/localStorageUtil";
 import showToast from "@/utils/toaster";
 import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -14,6 +15,11 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, email } = useAppSelector((state) => state.user);
+  const handleLogout = () => {
+    dispatch(clearUser());
+    showToast("Logout Success");
+    removeItem("access_token");
+  };
   return (
     <nav className="bg-white shadow-md rounded-md fixed top-0 left-0 right-0">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -41,10 +47,7 @@ const Navbar = () => {
                     <DropdownMenuContent className="mr-5">
                       <DropdownMenuItem
                         className="flex gap-2 cursor-pointer"
-                        onClick={() => {
-                          dispatch(clearUser());
-                          showToast("Logout Success");
-                        }}
+                        onClick={handleLogout}
                       >
                         <LogOut className="size-5 " /> Logout
                       </DropdownMenuItem>

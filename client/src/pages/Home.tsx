@@ -1,5 +1,6 @@
 import AddEditProject from "@/components/dialog/AddEditProject";
 import ConfirmationModal from "@/components/dialog/ConfirmationModal";
+import ShareLinkAlert from "@/components/dialog/ShareLinkAlert";
 import ProjectList from "@/components/List/ProjectList";
 import ProjectShimmer from "@/components/shimmer/ProjectShimmer";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,10 @@ const Home = () => {
     title: null,
     _id: null,
   });
+  const [shareLink, setShareLink] = useState<{
+    show: boolean;
+    url: string | null;
+  }>({ show: false, url: null });
 
   useEffect(() => {
     setIsLoading(true);
@@ -83,6 +88,8 @@ const Home = () => {
   };
   const handleDeleteFalse = () => setConfirmation({ show: false, _id: null });
 
+  const handleSetshareLink = (url: string) => setShareLink({ show: true, url });
+
   return (
     <div className="flex justify-center ">
       <div className="md:w-8/12 ">
@@ -101,12 +108,15 @@ const Home = () => {
                   {...project}
                   handleEditProject={handleEditProject}
                   handleDeleteProject={handleDeleteProject}
+                  handleSetshareLink={handleSetshareLink}
                   ref={i === projects.length - 1 ? lastItemRef : null}
                   key={project._id}
                 />
               ))
             ) : (
-              <h1 className="text-lg font-medium ">No projects.</h1>
+              <h1 className="text-lg font-normal ">
+                No projects found, create one by clicking the new project.
+              </h1>
             )}
 
             {isLoading &&
@@ -116,6 +126,12 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {shareLink.show && (
+        <ShareLinkAlert
+          url={shareLink.url}
+          setShow={() => setShareLink({ show: false, url: null })}
+        />
+      )}
       {modal.show && modal.action === "add" && (
         <AddEditProject
           action="add"

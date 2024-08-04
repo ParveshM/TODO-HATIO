@@ -16,6 +16,10 @@ axiosJWT.interceptors.request.use(async (config) => {
   let currentDate = new Date();
   let decodedToken;
   let accessToken = getItem("access_token") as string;
+  if (!accessToken) {
+    logout();
+    return config;
+  }
   try {
     decodedToken = await jwtDecode(accessToken);
   } catch (error) {

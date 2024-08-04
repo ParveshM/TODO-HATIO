@@ -1,17 +1,44 @@
 import { Download, Edit2Icon, FolderIcon, TrashIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { ProjectListType } from "@/types";
 import { Link } from "react-router-dom";
 import { setItem } from "@/utils/localStorageUtil";
+import axiosJWT from "@/utils/axiosJWT";
+import { PROJECT_URL } from "@/constants";
+import createGist from "@/api/createGist";
+import downloadasMarkdown from "@/utils/downloadMarkdown";
+
 type Props = ProjectListType & {
   handleEditProject: (id: string, title: string) => void;
   handleDeleteProject: (id: string) => void;
+  handleSetshareLink: (url: string) => void;
 };
+
 const ProjectList: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
-  { _id, title, createdAt, handleEditProject, handleDeleteProject },
+  {
+    _id,
+    title,
+    createdAt,
+    handleEditProject,
+    handleDeleteProject,
+    handleSetshareLink,
+  },
   ref
 ) => {
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const handleDownloadSummary = async () => {
+    setIsDownloading(true);
+    const { data } = await axiosJWT.get(PROJECT_URL + `/${_id}/todos`);
+    const { url, gistData } = (await createGist(
+      title,
+      data.todos
+    )) as unknown as { url: string; gistData: string };
+
+    downloadasMarkdown(gistData, `${title}.md`);
+    setIsDownloading(false);
+    handleSetshareLink(url);
+  };
   return (
     <div
       ref={ref}
@@ -51,9 +78,19 @@ const ProjectList: React.ForwardRefRenderFunction<HTMLDivElement, Props> = (
             <TrashIcon className="w-5 h-5" />
           </Button>
         </div>
-        <Button className="inline-flex h-9 px-4 text-sm font-medium text-primary-foreground bg-blue-700 rounded-md shadow transition-colors hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-          <Download className="mr-2 size-6" />
-          Download
+        <Button
+          onClick={handleDownloadSummary}
+          disabled={isDownloading}
+          className="inline-flex h-9 px-4 text-sm font-medium text-primary-foreground bg-blue-700 rounded-md shadow transition-colors hover:bg-blue-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+        >
+          {isDownloading ? (
+            "Downloading..."
+          ) : (
+            <>
+              <Download className="mr-2 size-6 " />
+              Download
+            </>
+          )}
         </Button>
       </div>
     </div>
