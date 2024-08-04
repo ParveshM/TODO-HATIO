@@ -1,5 +1,6 @@
-import AddProject from "@/components/dialog/AddProject";
+import AddEditProject from "@/components/dialog/AddEditProject";
 import ConfirmationModal from "@/components/dialog/ConfirmationModal";
+import ShareLinkAlert from "@/components/dialog/ShareLinkAlert";
 import ProjectList from "@/components/List/ProjectList";
 import ProjectShimmer from "@/components/shimmer/ProjectShimmer";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,25 @@ const Home = () => {
   const { lastItemRef, isLoading, page, setHasMore, setIsLoading } =
     useInfiniteScroll();
   const [projects, setProjects] = useState<ProjectListType[]>([]);
-  const [showModal, setShowModal] = useState<boolean>(false);
   const [confirmation, setConfirmation] = useState<DeleteConfirmation>({
     show: false,
     _id: null,
   });
+  const [modal, setModal] = useState<{
+    show: boolean;
+    action: "add" | "edit";
+    title?: string | null;
+    _id?: string | null;
+  }>({
+    show: false,
+    action: "add",
+    title: null,
+    _id: null,
+  });
+  const [shareLink, setShareLink] = useState<{
+    show: boolean;
+    url: string | null;
+  }>({ show: false, url: null });
 
   useEffect(() => {
     setIsLoading(true);
@@ -32,11 +47,23 @@ const Home = () => {
       .catch((err) => console.log(err));
   }, [page]);
 
-  const handleNewProject = (project: ProjectListType) =>
+  const handleNewProject = (project: ProjectListType) => {
+    console.log(project, "calling");
     setProjects((prev) => {
       prev.unshift(project);
       return prev;
     });
+  };
+
+  const handleEditProject = (_id: string, title: string) => {
+    setModal({ show: true, action: "edit", _id, title });
+  };
+
+  const handleUpdateProjectName = (title: string) => {
+    setProjects((prev) => {
+      return prev.map((p) => (p._id === modal._id ? { ...p, title } : p));
+    });
+  };
 
   const handleDeleteProject = (_id: string) =>
     setConfirmation({ show: true, _id });
@@ -61,12 +88,16 @@ const Home = () => {
   };
   const handleDeleteFalse = () => setConfirmation({ show: false, _id: null });
 
+  const handleSetshareLink = (url: string) => setShareLink({ show: true, url });
+
   return (
     <div className="flex justify-center ">
       <div className="md:w-8/12 ">
         <div className="flex gap-5 justify-between mr-5 pt-10 md:pt-20">
           <h1 className="text-2xl font-semibold ">Projects</h1>
-          <Button onClick={() => setShowModal(true)}>New Project</Button>
+          <Button onClick={() => setModal({ show: true, action: "add" })}>
+            New Project
+          </Button>
         </div>
 
         <div className="space-y-4 mt-5 p-5 rounded-md shadow-md border">
@@ -75,13 +106,17 @@ const Home = () => {
               projects.map((project, i) => (
                 <ProjectList
                   {...project}
+                  handleEditProject={handleEditProject}
                   handleDeleteProject={handleDeleteProject}
-                  key={project._id}
+                  handleSetshareLink={handleSetshareLink}
                   ref={i === projects.length - 1 ? lastItemRef : null}
+                  key={project._id}
                 />
               ))
             ) : (
-              <h1 className="text-lg font-medium ">No projects.</h1>
+              <h1 className="text-lg font-normal ">
+                No projects found, create one by clicking the new project.
+              </h1>
             )}
 
             {isLoading &&
@@ -91,8 +126,26 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {showModal && (
-        <AddProject setNewProject={handleNewProject} setShow={setShowModal} />
+      {shareLink.show && (
+        <ShareLinkAlert
+          url={shareLink.url}
+          setShow={() => setShareLink({ show: false, url: null })}
+        />
+      )}
+      {modal.show && modal.action === "add" && (
+        <AddEditProject
+          action="add"
+          handleNewProject={handleNewProject}
+          setShow={() => setModal({ show: false, action: "add" })}
+        />
+      )}
+      {modal.show && modal.action === "edit" && (
+        <AddEditProject
+          action="edit"
+          currentProjectInfo={{ _id: modal._id!, title: modal.title! }}
+          handleUpdateProjectName={handleUpdateProjectName}
+          setShow={() => setModal({ show: false, action: "edit" })}
+        />
       )}
       {confirmation.show && (
         <ConfirmationModal

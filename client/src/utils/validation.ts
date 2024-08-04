@@ -32,8 +32,8 @@ export const TitleValidationSchema = Yup.object().shape({
     .trim()
     .required("Title is required.")
     .matches(
-      /^([A-Z][a-z]*)(\s[A-Z][a-z]*)*$/,
-      "Title must start with an uppercase letter and can be followed by other words with the same pattern"
+      /^[A-Z][a-z]*(\s[A-Z][a-z]*)*$/,
+      "Title must start with an uppercase letter followed by lowercase letters and one space allowed in between words."
     )
     .min(5, "Title should be at least 5 characters long.")
     .max(15, "Title should not exceed 15 characters."),

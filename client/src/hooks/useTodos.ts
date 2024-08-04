@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { removeItem } from "@/utils/localStorageUtil";
 import { useEffect, useState } from "react";
 import { DeleteConfirmation, EditTodoType, TodoType } from "@/types";
@@ -20,12 +20,17 @@ export default function useTodos() {
     show: false,
     _id: null,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosJWT
       .get(PROJECT_URL + `/${projectId}/todos`)
       .then(({ data }) => setTodos(data.todos))
-      .catch((err) => console.log(err));
+      .catch(({ response }) => {
+        const message = response.data.message;
+        showToast(message, "error");
+        navigate("/");
+      });
     return () => removeItem("title");
   }, []);
 
@@ -71,8 +76,14 @@ export default function useTodos() {
     let currentStatus: string = "";
     setTodos((prev) =>
       prev.map((todo) => {
-        const newStatus = todo.status === "active" ? "completed" : "active";
-        currentStatus = newStatus;
+        if (todo._id === id) {
+          currentStatus = todo.status === "active" ? "completed" : "active";
+        }
+        const newStatus =
+          (todo._id === id && todo.status) === "active"
+            ? "completed"
+            : "active";
+
         return todo._id === id
           ? {
               ...todo,

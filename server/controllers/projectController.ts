@@ -23,7 +23,8 @@ const createProject = async (
     const { title } = matchedData(req);
 
     const existingProject = await Project.findOne({
-      title: { $regex: `${title.trim()}`, $options: "i" },
+      title: { $regex: `^${title}$`, $options: "i" },
+      userId: id,
     });
 
     if (existingProject) {
@@ -34,7 +35,7 @@ const createProject = async (
 
     const newProject = await Project.create({ title, userId: id });
 
-    return res.status(HttpStatus.OK).json({
+    return res.status(HttpStatus.CREATED).json({
       success: true,
       newProject,
       message: "Project created successfully",
@@ -55,7 +56,10 @@ const projects = async (req: Request, res: Response, next: NextFunction) => {
     const currPage = page || 1;
     const limit = 5;
     const skip = limit * (currPage - 1);
-    const projects = await Project.find({ userId: id }).skip(skip).limit(limit);
+    const projects = await Project.find({ userId: id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     return res.status(HttpStatus.OK).json({
       success: true,
       message: "Projects fetched successfully",
@@ -76,9 +80,11 @@ const updateProjectTitle = async (
 ) => {
   try {
     const { projectId } = req.params;
+    const { id } = req.user;
     const { title } = req.body;
     const existingProject = await Project.findOne({
-      title: { $regex: `${title.trim()}`, $options: "i" },
+      title: { $regex: `^${title}$`, $options: "i" },
+      userId: id,
     });
     if (existingProject) {
       return next(
