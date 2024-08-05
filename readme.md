@@ -49,18 +49,19 @@ npm run dev - server
 
 #### 1. Client
 
-Create a .env file in client with the following variables.
+Create a .env file in the client with the following variables.
 
 ```bash
 ⚠️ VITE_GITHUB_AUTH_TOKEN=your_github_auth_token (Mandatory) ⚠️
 
 ```
 
-To get the Auth_token for interacting with Github Rest Api's refer this document [Link](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#fine-grained-personal-access-tokens) .
+ To get the Auth_token for interacting with Github Rest Api's refer to this document [Link](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token). 
+##### *NB*: Allow the gist to create and read access for the auth_token, only then API will work as expected.
 
 #### 2. Server
 
-Create a .env file in server with the following variables.
+Create a .env file in the server with the following variables.
 
 ```bash
 PORT
